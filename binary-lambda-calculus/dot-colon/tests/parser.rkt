@@ -59,7 +59,7 @@
         10
 
 #|
-  (require (only-in lazy λ define add1 quasiquote unquote unless error !!))
+  (require (only-in lazy λ define add1 quasiquote unquote unless error foldr !!))
   (define 0-bit (λ (a) (λ (b) a)))
   (define 1-bit (λ (a) (λ (b) b)))
   (define (if a b c)
@@ -68,6 +68,8 @@
     (λ (sel) (if sel fst rst)))
   (define car 0-bit)
   (define cdr 1-bit)
+  (define (stream . lst)
+    (foldr cons `end-of-list lst))
   (define (number->rkt:number num)
     ((num add1) 0))
   (define (number-term->s-expr num-term)
@@ -85,68 +87,37 @@
         (number-term->s-expr parse-tree)))
 
   (define parse-tree-1
-    ((this (cons
-            1-bit
-            (cons
-             0-bit
-             43)))
+    ((this (stream 1-bit 0-bit))
      car))
   (define parse-tree-2
-    ((this (cons
-            1-bit
-            (cons
-             1-bit
-             (cons
-              0-bit
-              43))))
+    ((this (stream 1-bit 1-bit 0-bit))
      car))
   (parse-tree->s-expr parse-tree-1) ; 1
   (parse-tree->s-expr parse-tree-2) ; 2
 
   (define parse-tree-identity
-    ((this (cons
-            0-bit
-            (cons
-             0-bit
-             (cons
-              1-bit
-              (cons
-               0-bit
-               43)))))
+    ((this (stream 0-bit 0-bit 1-bit 0-bit))
      car))
   (if (parse-tree-identity car) 0 1)                          ; 0
   (if ((parse-tree-identity cdr) car) 0 1)                    ; 0
   (if (((parse-tree-identity cdr) cdr) car) 0 1)              ; 1
   (number->rkt:number (((parse-tree-identity cdr) cdr) cdr))  ; 1
   (!! (parse-tree->s-expr parse-tree-identity))
-  (!! (parse-tree->s-expr ((this (cons
+  (!! (parse-tree->s-expr ((this (stream
                                   0-bit
-                                  (cons
-                                   0-bit
-                                   (cons
-                                    0-bit
-                                    (cons
-                                     0-bit
-                                     (cons
-                                      1-bit
-                                      (cons
-                                       1-bit
-                                       (cons
-                                        0-bit
-                                        43))))))))
+                                  0-bit
+                                  0-bit
+                                  0-bit
+                                  1-bit
+                                  1-bit
+                                  0-bit))
                            car)))
-  (!! (parse-tree->s-expr ((this (cons
+  (!! (parse-tree->s-expr ((this (stream
                                   0-bit
-                                  (cons
-                                   0-bit
-                                   (cons
-                                    0-bit
-                                    (cons
-                                     0-bit
-                                     (cons
-                                      1-bit
-                                      (cons
-                                       0-bit
-                                       43)))))))
+                                  0-bit
+                                  0-bit
+                                  0-bit
+                                  1-bit
+                                  0-bit))
                            car)))
 |#
