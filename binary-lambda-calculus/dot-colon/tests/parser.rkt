@@ -59,12 +59,8 @@
         10
 
 #|
-  (require (only-in lazy λ define add1 quasiquote unquote unless error foldr !!)
+  (require (only-in lazy λ define quasiquote unquote !!)
            binary-lambda-calculus/lc-utils/lc-utils)
-  (define (number-term->s-expr num-term)
-    (unless (if (num-term car) #f #t)
-      (error "not a number term"))
-    (number->rkt:number (num-term cdr)))
   (define (parse-tree->s-expr parse-tree)
     `dummy)
   (define (parse-tree->s-expr parse-tree)
@@ -73,40 +69,28 @@
             `(λ ,(parse-tree->s-expr ((parse-tree cdr) cdr)))
             `(,(parse-tree->s-expr (((parse-tree cdr) cdr) car))
               ,(parse-tree->s-expr (((parse-tree cdr) cdr) cdr))))
-        (number-term->s-expr parse-tree)))
+        (number->rkt:number (parse-tree cdr))))
 
-  (define parse-tree-1
-    ((this (stream 1-bit 0-bit))
-     car))
-  (define parse-tree-2
-    ((this (stream 1-bit 1-bit 0-bit))
-     car))
-  (parse-tree->s-expr parse-tree-1) ; 1
-  (parse-tree->s-expr parse-tree-2) ; 2
+  (define (parse->s-expr bits)
+    (!! (parse-tree->s-expr ((this bits) car))))
+  (parse->s-expr (stream 1-bit 0-bit))       ; 1
+  (parse->s-expr (stream 1-bit 1-bit 0-bit)) ; 2
 
-  (define parse-tree-identity
-    ((this (stream 0-bit 0-bit 1-bit 0-bit))
-     car))
-  (if (parse-tree-identity car) 0 1)                          ; 0
-  (if ((parse-tree-identity cdr) car) 0 1)                    ; 0
-  (if (((parse-tree-identity cdr) cdr) car) 0 1)              ; 1
-  (number->rkt:number (((parse-tree-identity cdr) cdr) cdr))  ; 1
-  (!! (parse-tree->s-expr parse-tree-identity))
-  (!! (parse-tree->s-expr ((this (stream
-                                  0-bit
-                                  0-bit
-                                  0-bit
-                                  0-bit
-                                  1-bit
-                                  1-bit
-                                  0-bit))
-                           car)))
-  (!! (parse-tree->s-expr ((this (stream
-                                  0-bit
-                                  0-bit
-                                  0-bit
-                                  0-bit
-                                  1-bit
-                                  0-bit))
-                           car)))
+  (parse->s-expr (stream 0-bit 0-bit 1-bit 0-bit))
+  ; '(λ 1)
+  (parse->s-expr (stream 0-bit
+                         0-bit
+                         0-bit
+                         0-bit
+                         1-bit
+                         1-bit
+                         0-bit))
+  ; '(λ (λ 2))
+  (parse->s-expr (stream 0-bit
+                         0-bit
+                         0-bit
+                         0-bit
+                         1-bit
+                         0-bit))
+  ; '(λ (λ 1))
 |#
