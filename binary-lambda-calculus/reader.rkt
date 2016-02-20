@@ -33,6 +33,18 @@
 (define (wrapper1 thunk)
   ((wrap-reader thunk)))
 
+(define (read-next src in)
+  (define stx (read-syntax/recursive src in))
+  (cond [(eof-object? stx)
+         (define-values [line col pos]
+           (port-next-location in))
+         (raise-read-eof-error "expected a next expression"
+                               src line col pos 1)]
+        [(special-comment? stx)
+         (read-next src in)]
+        [else
+         stx]))
+
 (define ((make-0-proc 0-char 1-char) c in src line col pos)
   (define c2 (read-char in))
   (cond [(eof-object? c2)
@@ -42,10 +54,10 @@
           src line col pos 1)]
         [(char=? c2 0-char)
          (with-syntax ([blc-lambda (datum->syntax #'BLC-lambda 'BLC-lambda (list src line col pos 2))])
-           #`(blc-lambda #,(read-syntax/recursive src in #f)))]
+           #`(blc-lambda #,(read-next src in)))]
         [(char=? c2 1-char)
-         #`(#,(read-syntax/recursive src in #f)
-            #,(read-syntax/recursive src in #f))]
+         #`(#,(read-next src in)
+            #,(read-next src in))]
         [else
          (raise-read-error (format "expected either a `~a` or a `~a`"
                                    0-char 1-char)
