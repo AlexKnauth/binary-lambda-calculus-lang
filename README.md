@@ -1,6 +1,6 @@
 binary-lambda-calculus-lang
 ===
-A racket `#lang` for binary lambda-calculus.
+A racket `#lang` for binary lambda-calculus, based on https://en.wikipedia.org/wiki/Binary_lambda_calculus#Lambda_encoding.
 
 Example:
 
