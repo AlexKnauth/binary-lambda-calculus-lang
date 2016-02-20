@@ -1,7 +1,7 @@
 #lang racket
 
 (provide make-BLC-readtable
-         wrapper1
+         make-wrapper1
          )
 
 (require syntax/readerr
@@ -25,13 +25,13 @@
    0-char 'terminating-macro (make-0-proc 0-char 1-char)
    1-char 'terminating-macro (make-1-proc 0-char 1-char)))
 
-(define (wrap-reader rd)
+(define ((make-wrap-reader 0-char 1-char) rd)
   (lambda args
-    (parameterize ([current-readtable (make-BLC-readtable #\0 #\1)])
+    (parameterize ([current-readtable (make-BLC-readtable 0-char 1-char)])
       (strip-context (apply rd args)))))
 
-(define (wrapper1 thunk)
-  ((wrap-reader thunk)))
+(define ((make-wrapper1 0-char 1-char) thunk)
+  (((make-wrap-reader 0-char 1-char) thunk)))
 
 (define (read-next src in)
   (define stx (read-syntax/recursive src in))
@@ -91,6 +91,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (module+ test
+  (define wrap-reader (make-wrap-reader #\0 #\1))
   (define (rd str)
     ((wrap-reader read) (open-input-string str)))
   (check-equal? (rd "10") '(BLC-var 1))
