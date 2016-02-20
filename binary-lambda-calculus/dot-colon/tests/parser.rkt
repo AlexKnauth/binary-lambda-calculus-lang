@@ -42,15 +42,40 @@
         01 110
           0101 10 000010 000010
       ;; otherwise it's a function application
-      10 ; TODO
+      0100 ; let f = the-function
+        0100 ; let a = the-argument
+          0101 0000000101101110110
+            0101 0000000101101110110
+              0000110
+              0101 0000000101101110110
+                000010
+                0101 0000000101101110110
+                  ;; (f car)
+                  01 110 0000110
+                  ;; (a car)
+                  01 10 0000110
+            ;; (a cdr)
+            01 10 000010
+          ;; this is the argument, another recursive call
+          01 1110
+            ;; (f cdr)
+            01 10 000010
+        ;; this is the function, a recursive call
+        01 110
+          ;; ((bits cdr) cdr)
+          0101 10 000010 000010
     ;; otherwise it's a 1, parse it as a number
     0100 ; let n = parsed-number
       0101 0000000101101110110
         0101 0000000101101110110
           000010
           10
-        ;; (rest (bits (n rest)))
-        01 01 110 01 10 000010 000010
+        ;; (((n rest) bits) cdr)
+        0101
+          ;; (n rest)
+          01 10 0001 10 000010
+          110
+          000010
       ;; the parsed number
       01
         ;; from parse-unary-number.rkt
@@ -93,4 +118,16 @@
                          1-bit
                          0-bit))
   ; '(λ (λ 1))
+  (parse->s-expr (stream 0-bit
+                         0-bit
+                         0-bit
+                         0-bit
+                         0-bit
+                         1-bit
+                         1-bit
+                         1-bit
+                         0-bit
+                         1-bit
+                         0-bit))
+  ; '(λ (λ (2 1)))
 |#
