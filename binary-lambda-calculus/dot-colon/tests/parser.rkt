@@ -42,11 +42,13 @@
         01 110
           0101 10 000010 000010
       ;; otherwise it's a function application
-      10
+      10 ; TODO
     ;; otherwise it's a 1, parse it as a number
     0100 ; let n = parsed-number
       0101 0000000101101110110
-        10
+        0101 0000000101101110110
+          000010
+          10
         ;; (rest (bits (n rest)))
         01 01 110 01 10 000010 000010
       ;; the parsed number
@@ -57,7 +59,7 @@
         10
 
 #|
-  (require (only-in lazy λ define add1))
+  (require (only-in lazy λ define add1 quasiquote unquote unless error !!))
   (define 0-bit (λ (a) (λ (b) a)))
   (define 1-bit (λ (a) (λ (b) b)))
   (define (if a b c)
@@ -66,6 +68,41 @@
     (λ (sel) (if sel fst rst)))
   (define car 0-bit)
   (define cdr 1-bit)
+  (define (number->rkt:number num)
+    ((num add1) 0))
+  (define (number-term->s-expr num-term)
+    (unless (if (num-term car) #f #t)
+      (error "not a number term"))
+    (number->rkt:number (num-term cdr)))
+  (define (parse-tree->s-expr parse-tree)
+    `dummy)
+  (define (parse-tree->s-expr parse-tree)
+    (if (if (parse-tree car) 0-bit 1-bit)
+        (if ((parse-tree cdr) car)
+            `(λ ,(parse-tree->s-expr ((parse-tree cdr) cdr)))
+            `(,(parse-tree->s-expr (((parse-tree cdr) cdr) car))
+              ,(parse-tree->s-expr (((parse-tree cdr) cdr) cdr))))
+        (number-term->s-expr parse-tree)))
+
+  (define parse-tree-1
+    ((this (cons
+            1-bit
+            (cons
+             0-bit
+             43)))
+     car))
+  (define parse-tree-2
+    ((this (cons
+            1-bit
+            (cons
+             1-bit
+             (cons
+              0-bit
+              43))))
+     car))
+  (parse-tree->s-expr parse-tree-1) ; 1
+  (parse-tree->s-expr parse-tree-2) ; 2
+
   (define parse-tree-identity
     ((this (cons
             0-bit
@@ -77,7 +114,39 @@
                0-bit
                43)))))
      car))
-  (if (parse-tree-identity car) 0 1) ; 0
-  (if ((parse-tree cdr) car) 0 1)    ; 0
-  ((((parse-tree cdr) cdr) add1) 0)  ; 2
+  (if (parse-tree-identity car) 0 1)                          ; 0
+  (if ((parse-tree-identity cdr) car) 0 1)                    ; 0
+  (if (((parse-tree-identity cdr) cdr) car) 0 1)              ; 1
+  (number->rkt:number (((parse-tree-identity cdr) cdr) cdr))  ; 1
+  (!! (parse-tree->s-expr parse-tree-identity))
+  (!! (parse-tree->s-expr ((this (cons
+                                  0-bit
+                                  (cons
+                                   0-bit
+                                   (cons
+                                    0-bit
+                                    (cons
+                                     0-bit
+                                     (cons
+                                      1-bit
+                                      (cons
+                                       1-bit
+                                       (cons
+                                        0-bit
+                                        43))))))))
+                           car)))
+  (!! (parse-tree->s-expr ((this (cons
+                                  0-bit
+                                  (cons
+                                   0-bit
+                                   (cons
+                                    0-bit
+                                    (cons
+                                     0-bit
+                                     (cons
+                                      1-bit
+                                      (cons
+                                       0-bit
+                                       43)))))))
+                           car)))
 |#
