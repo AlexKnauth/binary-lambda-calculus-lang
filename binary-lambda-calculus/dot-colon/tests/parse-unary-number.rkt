@@ -26,21 +26,10 @@
       01 110
         01 10 000010
 #|
-  (require (only-in lazy λ define add1))
-  (define 0-bit (λ (a) (λ (b) a)))
-  (define 1-bit (λ (a) (λ (b) b)))
-  (define (stream-cons fst rst)
-    (λ (sel) ((sel fst) rst)))
+  (require (only-in lazy define)
+           binary-lambda-calculus/lc-utils/lc-utils)
   (define n
-    (this (stream-cons
-           1-bit
-           (stream-cons
-            1-bit
-            (stream-cons
-             1-bit
-             (stream-cons
-              0-bit
-              42))))))
-  ((n add1) 0)
+    (this (stream 1-bit 1-bit 1-bit 0-bit)))
+  (number->rkt:number n)
   ;; should return 3
 |#

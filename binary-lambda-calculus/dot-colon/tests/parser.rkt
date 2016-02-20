@@ -59,19 +59,8 @@
         10
 
 #|
-  (require (only-in lazy λ define add1 quasiquote unquote unless error foldr !!))
-  (define 0-bit (λ (a) (λ (b) a)))
-  (define 1-bit (λ (a) (λ (b) b)))
-  (define (if a b c)
-    ((a b) c))
-  (define (cons fst rst)
-    (λ (sel) (if sel fst rst)))
-  (define car 0-bit)
-  (define cdr 1-bit)
-  (define (stream . lst)
-    (foldr cons `end-of-list lst))
-  (define (number->rkt:number num)
-    ((num add1) 0))
+  (require (only-in lazy λ define add1 quasiquote unquote unless error foldr !!)
+           binary-lambda-calculus/lc-utils/lc-utils)
   (define (number-term->s-expr num-term)
     (unless (if (num-term car) #f #t)
       (error "not a number term"))
