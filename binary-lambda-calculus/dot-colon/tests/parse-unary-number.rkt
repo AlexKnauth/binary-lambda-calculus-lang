@@ -13,7 +13,7 @@
 ;;  - 01<add1><Number>
 ;; add1 = 000000011100101111011010     ; (λ (n) (λ (f x) (f (n f x))))
 01
-;; the Y combinator
+;; the strict Y combinator with the extra lambda
 000100011010000111000010111011010
 ;; takes f and a (Streamof Bit)
 00 00
