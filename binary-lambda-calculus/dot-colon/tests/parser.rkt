@@ -130,4 +130,6 @@
                          1-bit
                          0-bit))
   ; '(λ (λ (2 1)))
+  (parse->s-expr (stream 1-bit 0-bit))
+  ; 1
 |#
