@@ -1,4 +1,4 @@
-#lang racket
+#lang racket/base
 
 (provide make-BLC-readtable
          make-wrapper1
