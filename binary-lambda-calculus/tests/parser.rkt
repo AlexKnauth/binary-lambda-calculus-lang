@@ -85,7 +85,8 @@
 
 #|
   (require (only-in lazy λ define quasiquote unquote !!)
-           binary-lambda-calculus/lc-utils/lc-utils)
+           binary-lambda-calculus/lc-utils/lc-utils
+           binary-lambda-calculus/lc-utils/pair)
   (define (parse-tree->s-expr parse-tree)
     `dummy)
   (define (parse-tree->s-expr parse-tree)

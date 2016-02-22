@@ -27,7 +27,8 @@
         01 10 000010
 #|
   (require (only-in lazy define)
-           binary-lambda-calculus/lc-utils/lc-utils)
+           binary-lambda-calculus/lc-utils/lc-utils
+           binary-lambda-calculus/lc-utils/pair)
   (define n
     (this (stream 1-bit 1-bit 1-bit 0-bit)))
   (number->rkt:number n)

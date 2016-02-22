@@ -58,6 +58,7 @@
 
 #|
   (require binary-lambda-calculus/lc-utils/lc-utils
+           binary-lambda-calculus/lc-utils/pair
            (only-in lazy λ define quote))
   (define 1-term
     (cons 1-bit (λ (f) (λ (x) (f x)))))
