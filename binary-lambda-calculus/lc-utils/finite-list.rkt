@@ -7,6 +7,8 @@
          rest
          )
 
+(require "lc-utils.rkt")
+
 ;; A Trit is one of:
 (define 0-trit (λ (a) (λ (b) (λ (c) a))))
 (define 1-trit (λ (a) (λ (b) (λ (c) b))))
