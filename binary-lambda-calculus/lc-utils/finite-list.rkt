@@ -7,15 +7,8 @@
          rest
          )
 
-(require "lc-utils.rkt")
-
-;; A Trit is one of:
-(define 0-trit (λ (a) (λ (b) (λ (c) a))))
-(define 1-trit (λ (a) (λ (b) (λ (c) b))))
-(define 2-trit (λ (a) (λ (b) (λ (c) c))))
-
-(define (trit-case trit a b c)
-  (((trit a) b) c))
+(require "lc-utils.rkt"
+         "choice/trit.rkt")
 
 ;; Dynamic dispatch.
 ;; A (Finite-Listof a) is a type that supports these operations:
