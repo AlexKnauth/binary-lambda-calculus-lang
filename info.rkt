@@ -4,6 +4,8 @@
 
 (define deps
   '("base"
+    "lazy"
+    "plait"
     ))
 
 (define build-deps
