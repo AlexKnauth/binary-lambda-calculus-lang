@@ -1,9 +1,9 @@
-#lang plai-typed
+#lang plait
 
 (define-type BLC-Expr
   [BLC-lambda (body : BLC-Expr)]
   [BLC-app    (function : BLC-Expr) (argument : BLC-Expr)]
-  [BLC-var    (index : number)]) ;; Positive-Integer
+  [BLC-var    (index : Number)]) ;; Positive-Integer
 
 (define-type BLC-Value
   [BLC-closure (body : BLC-Expr) (env : Env)])
@@ -13,7 +13,7 @@
 ;;  - env-lookup-var : Env Positive-Integer -> BLC-Value
 ;;  - env-extend : Env BLC-Value -> Env
 
-(define-type-alias Env (listof BLC-Value))
+(define-type-alias Env (Listof BLC-Value))
 
 (define env-empty (list))
 
@@ -25,13 +25,13 @@
 
 (define (interp expr env)
   (type-case BLC-Expr expr
-    [BLC-var (n) (env-lookup-var env n)]
-    [BLC-lambda (body) (BLC-closure body env)]
-    [BLC-app (f a) (app (interp f env) (interp a env))]))
+    [(BLC-var n) (env-lookup-var env n)]
+    [(BLC-lambda body) (BLC-closure body env)]
+    [(BLC-app f a) (app (interp f env) (interp a env))]))
 
 (define (app f a)
   (type-case BLC-Value f
-    [BLC-closure (body env) (interp body (env-extend env a))]))
+    [(BLC-closure body env) (interp body (env-extend env a))]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
