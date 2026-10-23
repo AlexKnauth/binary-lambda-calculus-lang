@@ -1,4 +1,4 @@
-#lang lazy
+#lang racket/base
 
 (provide BLC-lambda BLC-var
          #%module-begin #%top-interaction #%app #%datum
@@ -6,7 +6,7 @@
          )
 
 (require syntax/parse/define
-         (only-in lazy [#%module-begin rkt:module-begin])
+         (only-in racket/base [#%module-begin rkt:module-begin])
          "blc-lambda.rkt"
          (for-syntax racket/base
                      syntax/parse
