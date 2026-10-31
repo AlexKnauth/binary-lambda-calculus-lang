@@ -1,4 +1,4 @@
-#lang binary-lambda-calculus
+#lang binary-lambda-calculus/lazy
 00                ; (λ (f)
   01              ;   (#%app
     00            ;    (λ (g)
