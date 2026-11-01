@@ -139,7 +139,7 @@ Can be expressed with a Scott encoding like this:
 And expressed in BLC like this:
 ```racket
 010101000000 ; declare A B C
-  010101 v ; match v
+  010101 V ; match v
     000000 ; | A x y z:
       ...  ;   ...
     000000 ; | B u v w:
