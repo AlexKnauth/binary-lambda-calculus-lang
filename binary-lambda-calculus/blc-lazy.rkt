@@ -12,6 +12,8 @@
                      syntax/parse
                      ))
 
+(define-blc-lambda BLC-lambda lambda)
+
 (define-simple-macro (#%module-begin form:expr)
   #:with this:id (datum->syntax #'form 'this)
   (rkt:module-begin

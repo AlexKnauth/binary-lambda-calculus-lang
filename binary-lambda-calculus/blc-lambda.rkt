@@ -1,6 +1,6 @@
 #lang racket/base
 
-(provide BLC-lambda
+(provide define-blc-lambda
          BLC-var
          )
 
@@ -12,15 +12,33 @@
   (require rackunit))
 
 (begin-for-syntax
+  (struct blc-lambda-transformer [lambda-id]
+    #:property prop:procedure
+    (lambda (self stx)
+      (define lambda-id (blc-lambda-transformer-lambda-id self))
+      (syntax-parse stx
+        [(BLC-lambda body:expr)
+         #:with x* (generate-temporary)
+         #:with x (syntax-property
+                   (datum->syntax #'x* (syntax-e #'x*) #'BLC-lambda #'BLC-lambda)
+                   'original-for-check-syntax #t)
+         (quasisyntax/loc stx
+           (#,lambda-id
+            (x)
+            #,(subst 1 #'x #'body)))])))
+
+  (define-syntax-class blc-lambda-id
+    [pattern {~var x (static blc-lambda-transformer? "blc-lambda")}])
+
   (define (subst n arg-id body)
-    (syntax-parse body #:literals (BLC-var BLC-lambda)
+    (syntax-parse body #:literals (BLC-var)
       [(BLC-var i:nat)
        (cond
          [(= (syntax-e #'i) n)
           (datum->syntax arg-id (syntax-e arg-id) body arg-id)]
          [else
           body])]
-      [(blc-lambda:BLC-lambda b:expr)
+      [(blc-lambda:blc-lambda-id b:expr)
        (datum->syntax body
          (list #'blc-lambda
                (subst (add1 n) arg-id #'b))
@@ -34,21 +52,17 @@
          body)]
       [id:id #'id])))
 
-(define-syntax BLC-lambda
+(define-syntax define-blc-lambda
   (lambda (stx)
     (syntax-parse stx
-      [(BLC-lambda body:expr)
-       #:with x* (generate-temporary)
-       #:with x (syntax-property
-                 (datum->syntax #'x* (syntax-e #'x*) #'BLC-lambda #'BLC-lambda)
-                 'original-for-check-syntax #t)
-       (quasisyntax/loc stx
-         (lambda (x)
-           #,(subst 1 #'x #'body)))])))
+      [(define-BLC-lambda x:id lam:id)
+       #'(define-syntax x (blc-lambda-transformer #'lam))])))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (module+ test
+  (define-blc-lambda BLC-lambda lambda)
+
   (define identity
     (BLC-lambda (BLC-var 1)))
 
