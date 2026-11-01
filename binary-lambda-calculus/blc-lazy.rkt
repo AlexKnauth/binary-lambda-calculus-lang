@@ -2,7 +2,7 @@
 
 (provide BLC-lambda BLC-var
          #%module-begin #%top-interaction #%app #%datum
-         require only-in
+         require only-in rename-in prefix-in
          )
 
 (require syntax/parse/define
