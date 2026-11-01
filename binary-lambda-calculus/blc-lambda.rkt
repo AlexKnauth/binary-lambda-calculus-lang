@@ -4,7 +4,8 @@
          BLC-var
          )
 
-(require (for-syntax racket/base
+(require "blc-var.rkt"
+         (for-syntax racket/base
                      racket/syntax
                      syntax/parse))
 (module+ test
@@ -44,10 +45,6 @@
        (quasisyntax/loc stx
          (lambda (x)
            #,(subst 1 #'x #'body)))])))
-
-(define-syntax BLC-var
-  (lambda (stx)
-    (raise-syntax-error #f "unbound identifier" stx)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
